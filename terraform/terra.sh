@@ -6,5 +6,5 @@ TERRA_DIR=$(cd $TERRA_DIR; pwd -P)
 
 docker run -i --rm \
     -v $TERRA_DIR:/opt/terraform \
-    4xyz/terraform:$(< ${MY_PATH}/VERSION) \
+    4xyz/terraform:latest \
     terraform $@
