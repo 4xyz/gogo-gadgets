@@ -1,0 +1,177 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+
+VAGRANT_COMMAND = ARGV[0]
+FILE_TO_DISK = ".vagrant/machines/default/virtualbox/dev2nd.vdi"
+VM_USER = 'vagrant'
+
+# print $provision_script
+current_dir = File.dirname(File.expand_path(__FILE__))
+
+USERNAME = "#{ENV['USERNAME'] || `whoami`}".tr(" ", "").downcase
+VM_BOX = 'bento/ubuntu-20.04'
+VB_NAME = "4xyz"
+
+print "VM_BOX       = #{VM_BOX}\n"
+print "VB_NAME      = #{VB_NAME}\n"
+
+# https://gist.github.com/leifg/4713995
+# using this override to make sure we have the right storage contoller we need
+class VagrantPlugins::ProviderVirtualBox::Action::SetName
+  alias_method :original_call, :call
+  def call(env)
+    machine = env[:machine]
+    driver = machine.provider.driver
+    uuid = driver.instance_eval { @uuid }
+    ui = env[:ui]
+
+    controller_name = 'SCSI'
+
+    vm_info = driver.execute("showvminfo", uuid)
+    has_this_controller = vm_info.match("Storage Controller Name.*#{controller_name}")
+
+    if has_this_controller
+      ui.info "already has the #{controller_name} hdd controller"
+    else
+      ui.info "creating #{controller_name} controller #{controller_name}"
+      driver.execute('storagectl', uuid,
+        '--name', "#{controller_name}",
+        '--add', 'scsi')
+    end
+
+    original_call(env)
+  end
+end
+
+
+Vagrant.configure("2") do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://atlas.hashicorp.com/search.
+  config.vm.box = "#{VM_BOX}"
+
+  # if VAGRANT_COMMAND == "ssh" or VAGRANT_COMMAND == "ssh-config"
+  #   # After provisioned, we want vagrant ssh to land on 'stc' user
+  #   # Don't change this behavior
+  #   # if you need to change this for other reasons, don't check the change in
+  #   print "VM_USER = #{VM_USER}\n"
+  #   config.ssh.username = "#{VM_USER}"
+  #   config.ssh.keys_only = true
+  # end
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 8001, host: 8001
+  config.vm.network "forwarded_port", guest: 8081, host: 8081
+  config.vm.network "forwarded_port", guest: 8082, host: 8082
+  config.vm.network "forwarded_port", guest: 8083, host: 8083
+  config.vm.network "forwarded_port", guest: 8084, host: 8084
+  config.vm.network "forwarded_port", guest: 8085, host: 8085
+  config.vm.network "forwarded_port", guest: 8088, host: 8088
+  config.vm.network "forwarded_port", guest: 8089, host: 8089
+  config.vm.network "forwarded_port", guest: 8079, host: 8079
+  config.vm.network "forwarded_port", guest: 22, host: 3322
+  config.vm.network "forwarded_port", guest: 6432, host: 6432
+  config.vm.network "forwarded_port", guest: 6378, host: 6378
+  config.vm.network "forwarded_port", guest: 443, host: 443
+  config.vm.network "forwarded_port", guest: 443, host: 8443
+  # host-only network for NFS
+  config.vm.network :private_network, ip: "10.10.99.11", auto_config: true
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  # config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  # config.vm.synced_folder "../data", "/vagrant_data"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    vb.gui = false
+    vb.name = "#{VB_NAME}"
+     # Customize the amount of memory on the VM:
+    vb.cpus = "3"
+    vb.memory = "8192"
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+    vb.customize ["modifyvm", :id, "--vram", "16"]
+
+    # print "VAGRANT_COMMAND = #{VAGRANT_COMMAND}\n"
+    if VAGRANT_COMMAND == "up" && ! File.exists?(FILE_TO_DISK)
+      # print "Creating /dev/sdc ...\n"
+      vb.customize ['createhd', '--filename', FILE_TO_DISK, '--size', 50 * 1024]
+      vb.customize ['storageattach', :id, '--storagectl', 'SCSI', '--port', 3, '--device', 0, '--type', 'hdd', '--medium', FILE_TO_DISK] # will be /dev/sdc
+    end
+  end
+
+  config.vm.hostname = "4xyz"
+  config.ssh.pty = false
+  config.vm.boot_timeout = 300
+
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
+  # such as FTP and Heroku are also available. See the documentation at
+  # https://docs.vagrantup.com/v2/push/atlas.html for more information.
+  # config.push.define "atlas" do |push|
+  #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
+  # end
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+
+  config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/tmp/#{VM_USER}/.ssh/authorized_keys"
+  config.vm.provision "file", source: "~/.ssh/id_rsa", destination: "/tmp/#{VM_USER}/.ssh/id_rsa"
+  config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/tmp/#{VM_USER}/.ssh/id_rsa.pub"
+  config.vm.provision "file", source: "~/.gitconfig", destination: "/tmp/#{VM_USER}/.gitconfig"
+  config.vm.provision "shell", privileged: false, inline: "cp $HOME/.ssh/authorized_keys /tmp/vagrant_authorized_keys"
+
+  if File.exists?(File.expand_path("~/.ssh/authorized_keys"))
+    config.vm.provision "file", source: "~/.ssh/authorized_keys", destination: "/tmp/host_authorized_keys"
+  end
+
+  # need to be after the 'file' provisions; provision.sh depends on some of the files added
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+
+  if Vagrant::Util::Platform.windows? then
+    config.vm.synced_folder "../../..", "/home/vagrant/gogo-gadgets", type: "smb"
+  else
+    config.vm.synced_folder "../../..", "/home/vagrant/gogo-gadgets",
+      type: "nfs",
+      nfs: true,
+      nfs_version: 3,
+      nfs_udp: false,
+      linux__nfs_options: ['rw','no_subtree_check','all_squash','async'],
+      mount_options: ['rw', 'vers=3', 'tcp', 'fsc' ,'actimeo=2']
+  end
+end
