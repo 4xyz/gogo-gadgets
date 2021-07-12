@@ -18,10 +18,10 @@ from pathlib import Path
 
 # Load dataset
 url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/iris.csv"
-names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'class']
+names = ["sepal-length", "sepal-width", "petal-length", "petal-width", "class"]
 dataset = read_csv(url, names=names)
 current_dir = Path(__file__).parent.absolute()
-work_dir = Path(current_dir) / '.workdir'
+work_dir = Path(current_dir) / ".workdir"
 
 
 def main():
@@ -32,19 +32,19 @@ def main():
     print("=== descriptions ===")
     print(dataset.describe())
     print("=== class distribution ===")
-    print(dataset.groupby('class').size())
+    print(dataset.groupby("class").size())
 
     # box and whisker plots
-    dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
-    pyplot.savefig(str(work_dir / 'iris_datset_box.png'))
+    dataset.plot(kind="box", subplots=True, layout=(2, 2), sharex=False, sharey=False)
+    pyplot.savefig(str(work_dir / "iris_datset_box.png"))
 
     # histograms
     dataset.hist()
-    pyplot.savefig(str(work_dir / 'iris_datset_hist.png'))
+    pyplot.savefig(str(work_dir / "iris_datset_hist.png"))
 
     # scatter plot matrix
     scatter_matrix(dataset)
-    pyplot.savefig(str(work_dir / 'iris_datset_scatter_matrix.png'))
+    pyplot.savefig(str(work_dir / "iris_datset_scatter_matrix.png"))
 
 
 if __name__ == "__main__":
