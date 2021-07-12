@@ -1,0 +1,12 @@
+[flake8]
+
+# Note on max-line-length: Since we're also using Black to reformat files
+# and it tries its best to fit lines in the the desired width, we'll only
+# complain here if lines are ~10% longer than our limit.
+max-line-length=88
+
+max-complexity=10
+
+exclude=
+    *_pb2.py,
+    *_pb2_grpc.py

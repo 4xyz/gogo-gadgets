@@ -5,6 +5,43 @@
 		}
 	],
 	"settings": {
-		"python.formatting.provider": "black"
+		"python.formatting.provider": "black",
+		"workbench.editorAssociations": {
+			"*.ipynb": "jupyter.notebook.ipynb"
+		},
+		"explorer.confirmDragAndDrop": false,
+		"editor.renderWhitespace": "boundary",
+		"files.trimTrailingWhitespace": true,
+		"files.exclude": {
+			"**/__pycache__": true,
+			"**/.DS_Store": true,
+			"**/.git": true,
+			"**/.hg": true,
+			"**/.svn": true,
+			"**/*.pyc": true,
+			"**/CVS": true,
+			"**/.pytest_cache": true,
+			"**/.vscode": true
+		},
+		"python.linting.pylintArgs": [
+			"--load-plugins",
+			"pylint_django"
+		],
+		"workbench.editor.enablePreview": false,
+		"python.linting.pycodestyleArgs": [
+			"--ignore=E226,E302,E41,E203,E402,E731,E501"
+		],
+		"editor.rulers": [
+			88
+		],
+		"git.ignoreLegacyWarning": true,
+		"python.linting.flake8Enabled": true,
+		"python.terminal.activateEnvironment": false,
+		"remote.autoForwardPortsSource": "output",
+		"extensions.ignoreRecommendations": true,
+		"workbench.editor.untitled.hint": "hidden",
+		"python.pythonPath": "/usr/bin/python3",
+		"python.defaultInterpreterPath": "/usr/bin/python3",
+		"diffEditor.ignoreTrimWhitespace": false
 	}
 }
