@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "../.."
+			"path": "../../machine-learning/iris/python3"
 		}
 	],
 	"settings": {
@@ -40,8 +40,8 @@
 		"remote.autoForwardPortsSource": "output",
 		"extensions.ignoreRecommendations": true,
 		"workbench.editor.untitled.hint": "hidden",
-		"python.pythonPath": "/usr/bin/python3",
-		"python.defaultInterpreterPath": "/usr/bin/python3",
+		"python.pythonPath": "${workspaceFolder}/iris-venv/bin/python",
+		"python.defaultInterpreterPath": "${workspaceFolder}/iris-venv/bin/python",
 		"diffEditor.ignoreTrimWhitespace": false
 	},
 	"launch": {
