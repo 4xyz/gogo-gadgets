@@ -24,6 +24,18 @@ current_dir = Path(__file__).parent.absolute()
 work_dir = Path(current_dir) / ".workdir"
 
 
+def pyplot_img(format="png"):
+    import base64
+    from io import BytesIO
+
+    bio = BytesIO()
+    pyplot.savefig(bio, format=format)
+    return (
+        f'<img src="data:image/{format};base64,'
+        f'{base64.b64encode(bio.getvalue()).decode("utf-8").strip()}"/>'
+    )
+
+
 def main():
     print("=== shape ===")
     print(dataset.shape)
@@ -45,6 +57,7 @@ def main():
     # scatter plot matrix
     scatter_matrix(dataset)
     pyplot.savefig(str(work_dir / "iris_datset_scatter_matrix.png"))
+    print(pyplot_img())
 
 
 if __name__ == "__main__":
