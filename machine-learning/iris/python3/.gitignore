@@ -1,2 +1,4 @@
 .iris/
 .workdir/
+node_modules/
+build/

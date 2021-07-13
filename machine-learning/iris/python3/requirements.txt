@@ -5,3 +5,10 @@ pandas
 sklearn
 black
 flake8
+Django
+celery
+djangorestframework
+markdown
+django-filter
+gevent
+docker-compose

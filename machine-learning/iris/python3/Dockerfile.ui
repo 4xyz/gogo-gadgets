@@ -1,0 +1,9 @@
+FROM node:16.4.2-slim
+
+ADD app/frontend/iris/package.json /app/iris/package.json
+ADD app/frontend/iris/yarn.lock /app/iris/yarn.lock
+RUN cd /app/iris && \
+    yarn install
+ADD app/frontend/iris/public /app/iris/public
+ADD app/frontend/iris/src /app/iris/src
+WORKDIR /app/iris

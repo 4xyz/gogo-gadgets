@@ -42,7 +42,8 @@
 		"workbench.editor.untitled.hint": "hidden",
 		"python.pythonPath": "${workspaceFolder}/.iris/bin/python",
 		"python.defaultInterpreterPath": "${workspaceFolder}/.iris/bin/python",
-		"diffEditor.ignoreTrimWhitespace": false
+		"diffEditor.ignoreTrimWhitespace": false,
+		"git.ignoreLimitWarning": true
 	},
 	"launch": {
 		"version": "0.2.0",
